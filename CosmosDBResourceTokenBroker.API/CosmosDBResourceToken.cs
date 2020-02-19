@@ -43,7 +43,7 @@ namespace CosmosDBResourceTokenBroker.API
 
             PermissionToken permissionToken = null;
 
-            string authHeader = req.Headers["Authorization"];
+            string authHeader = req.Headers?.GetValues("x-zumo-auth").FirstOrDefault();
 
             if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer"))
             {
