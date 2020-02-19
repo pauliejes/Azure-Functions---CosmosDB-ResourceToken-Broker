@@ -130,7 +130,7 @@ namespace CosmosDBResourceTokenBroker.API
             {
                 permission = await repo.GetPermissionAsync(user, permissionId, new RequestOptions { ResourceTokenExpirySeconds = (int)TOKEN_EXPIRY.TotalSeconds });
 
-                System.Diagnostics.Debug.WriteLine($"Retreived Existing Permission. {permission.Id}");
+                // System.Diagnostics.Debug.WriteLine($"Retreived Existing Permission. {permission.Id}");
 
             }
             catch (DocumentClientException e)

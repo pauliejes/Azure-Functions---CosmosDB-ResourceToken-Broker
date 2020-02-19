@@ -38,7 +38,7 @@ namespace CosmosDBResourceTokenBrokerV2.API
                 .Database(cosmosDatabase)
                 .Collection(cosmosCollection);
 
-        static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        // static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 
 
         /// <summary>
@@ -50,7 +50,7 @@ namespace CosmosDBResourceTokenBrokerV2.API
         [FunctionName("AddGalleryTiles")]
         public static async Task<IActionResult> AddGalleryTile([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req, TraceWriter log)
         {
-            sw.Restart();
+            // sw.Restart();
 
 			string TitleTMP = req.Query["Title"];
             string Display_tabsTMP = req.Query["display_tabs"];
@@ -101,9 +101,9 @@ namespace CosmosDBResourceTokenBrokerV2.API
 				ChartUse = ChartUseTMP
 			});
 
-            sw.Stop();
+            // sw.Stop();
 
-            log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
+            // log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
 
             return galleryTile != null
                 ? (ActionResult)new OkObjectResult(galleryTile)
@@ -120,7 +120,7 @@ namespace CosmosDBResourceTokenBrokerV2.API
         [FunctionName("GetMyGalleryTiles")]
         public static async Task<IActionResult> GetMyGalleryTiles([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req, TraceWriter log)
         {
-            sw.Restart();
+            // sw.Restart();
 
             // As a client, you would already have your userId when calling typically.
             string userId = req.Query["UserId"];
@@ -139,8 +139,8 @@ namespace CosmosDBResourceTokenBrokerV2.API
 
             var results = await repo.GetAllItemsAsync<GalleryTile>(new FeedOptions { PartitionKey = new PartitionKey("adhockem@microsoft.com") });
 
-            sw.Stop();
-            log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
+            // sw.Stop();
+            // log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
 
             return results != null
                 ? (ActionResult)new OkObjectResult(results)
@@ -156,7 +156,7 @@ namespace CosmosDBResourceTokenBrokerV2.API
         [FunctionName("TryGetAllGalleryTiles")]
         public static async Task<IActionResult> TryGetAllGalleryTiles([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req, TraceWriter log)
         {
-            sw.Restart();
+            // sw.Restart();
 
             // As a client, you would already have your userId when calling typically.
             string userId = req.Query["UserId"];
@@ -178,8 +178,8 @@ namespace CosmosDBResourceTokenBrokerV2.API
             // https://github.com/Azure/azure-documentdb-dotnet/issues/312
             var results = await repo.GetAllItemsAsync<GalleryTile>(new FeedOptions { EnableCrossPartitionQuery = true });
 
-            sw.Stop();
-            log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
+            // sw.Stop();
+            // log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
 
             return results != null
                 ? (ActionResult)new OkObjectResult(results)
