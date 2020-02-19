@@ -6,7 +6,7 @@
 
   <ItemGroup Condition="'$(TargetFramework)' == 'netstandard1.6' ">
     <PackageReference Include="Microsoft.Azure.DocumentDB.Core">
-      <Version>2.9.3</Version>
+      <Version>1.7.1</Version>
     </PackageReference>
   </ItemGroup>
   <ItemGroup>
