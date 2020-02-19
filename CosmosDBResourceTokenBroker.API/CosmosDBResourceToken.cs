@@ -84,8 +84,7 @@ namespace CosmosDBResourceTokenBroker.API
             log.Info($"Request Duration: {sw.ElapsedMilliseconds}ms.");
 
             return permissionToken == null ?
-                    req.CreateErrorResponse(HttpStatusCode.Unauthorized, $"Unable to create permission token for user.") :
-                    req.CreateResponse<PermissionToken>(HttpStatusCode.OK, permissionToken);
+                    req.CreateErrorResponse(HttpStatusCode.Unauthorized, $"Unable to create permission token for user.");
 
         }
 
