@@ -7,9 +7,6 @@
     <PackageReference Include="Microsoft.NET.Sdk.Functions" Version="1.0.6" />
   </ItemGroup>
   <ItemGroup>
-	<PackageReference Include="Microsoft.Azure.DocumentDB.Core" Version="2.9.3" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\CosmosDBResourceTokenBroker.Shared\CosmosDBResourceTokenBroker.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
