@@ -15,7 +15,7 @@ using CosmosDBResourceTokenBroker.Shared.Models;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents;
 
-namespace CosmosDBResourceTokenBrokerV2.API
+namespace CosmosDBResourceTokenBroker.API
 {
     /*
      * Notes:  This Function is for demonstation purposes to act as a 'Client' that would be using the CosmosDB SDK directly

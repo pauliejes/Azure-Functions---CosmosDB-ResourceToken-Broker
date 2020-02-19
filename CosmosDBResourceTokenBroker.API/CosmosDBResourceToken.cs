@@ -16,7 +16,7 @@ using System.Net.Http.Headers;
 using Newtonsoft.Json.Linq;
 using System.Linq;
 
-namespace CosmosDBResourceTokenBrokerV2.API
+namespace CosmosDBResourceTokenBroker.API
 {
     public static class CosmosDBResourceToken
     {
