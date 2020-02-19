@@ -11,7 +11,7 @@ namespace CosmosDBResourceTokenBroker.Shared.Models
         public string Title { get; set; }
 
         [JsonProperty("display_tabs")]
-        public int Display_tabs { get; set; }
+        public string Display_tabs { get; set; }
 
 		[JsonProperty("TableauID")]
         public string TableauID { get; set; }
@@ -26,7 +26,7 @@ namespace CosmosDBResourceTokenBroker.Shared.Models
         public string ChartThumbLink { get; set; }
 
 		[JsonProperty("favorited")]
-        public bool Favorited { get; set; }
+        public string Favorited { get; set; }
 
         [JsonProperty("filterContentType")]
         public string FilterContentType { get; set; }
@@ -38,10 +38,10 @@ namespace CosmosDBResourceTokenBroker.Shared.Models
         public string FilterContentGroup { get; set; }
 
 		[JsonProperty("viewCount")]
-        public int ViewCount { get; set; }
+        public string ViewCount { get; set; }
 
         [JsonProperty("nviews")]
-        public int Nviews { get; set; }
+        public string Nviews { get; set; }
 
 		[JsonProperty("SelfService")]
         public string SelfService { get; set; }
