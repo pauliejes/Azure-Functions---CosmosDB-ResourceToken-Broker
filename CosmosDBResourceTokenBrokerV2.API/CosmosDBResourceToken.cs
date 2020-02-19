@@ -6,7 +6,7 @@ using Microsoft.Azure.WebJobs.Extensions.Http;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs.Host;
 using Newtonsoft.Json;
-using System.Core;
+using System;
 using CosmosDBResourceTokenBroker.Shared;
 using Microsoft.Azure.Documents;
 using Microsoft.Azure.Documents.Client;
@@ -31,7 +31,10 @@ namespace CosmosDBResourceTokenBrokerV2.API
         private static HttpClient http => _http.Value;
 
         // Using our repository instead of CosmosDB Bindings.
-        static CosmosDBRepository repo = CosmosDBRepository.Instance.ConnectionString(GetEnvironmentVariable("myCosmosDB")).Database(DATABASE).Collection(COLLECTION);
+        static CosmosDBRepository repo = CosmosDBRepository.Instance
+                .ConnectionString(GetEnvironmentVariable("myCosmosDB"))
+                .Database(DATABASE)
+                .Collection(COLLECTION);
 
         [FunctionName("CosmosDBResourceToken")]
         public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req, TraceWriter log)
