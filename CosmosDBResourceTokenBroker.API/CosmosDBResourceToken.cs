@@ -24,7 +24,8 @@ namespace CosmosDBResourceTokenBroker.API
         private static string HOST = GetEnvironmentVariable("host");
         private static string DATABASE = GetEnvironmentVariable("cosmosDatabase");
         private static string COLLECTION = GetEnvironmentVariable("cosmosCollection");
-        private static TimeSpan TOKEN_EXPIRY = TimeSpan.FromHours(5);  // Resource Token defaults to 1 hour, max of 5 hours.
+		private static string CONNSTR = GetEnvironmentVariable("myCosmosDB");
+        private static TimeSpan TOKEN_EXPIRY = TimeSpan.FromHours(1);  // Resource Token defaults to 1 hour, max of 5 hours.
 
         // static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 
@@ -33,7 +34,7 @@ namespace CosmosDBResourceTokenBroker.API
 
         // Using our repository instead of CosmosDB Bindings.
         static CosmosDBRepository repo = CosmosDBRepository.Instance
-                .ConnectionString(GetEnvironmentVariable("myCosmosDB"))
+                .ConnectionString(CONNSTR)
                 .Database(DATABASE)
                 .Collection(COLLECTION);
 
@@ -59,6 +60,7 @@ namespace CosmosDBResourceTokenBroker.API
             //if (req.Headers.Authorization != null && req.Headers.Authorization.Scheme.Equals("Bearer") && !string.IsNullOrEmpty(req.Headers.Authorization.Parameter))
             if (!string.IsNullOrEmpty(zumoHeader))
             {
+				return req.CreateErrorResponse(HttpStatusCode.OK, "Woopwoop");
                 // User passed an authenication token
                 // Process and create a user in CosmosDB, write the token to the token cache and return the resource token.
 
