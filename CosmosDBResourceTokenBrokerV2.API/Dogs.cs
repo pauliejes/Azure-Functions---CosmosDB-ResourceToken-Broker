@@ -21,7 +21,7 @@ namespace CosmosDBResourceTokenBrokerV2.API
      * Notes:  This Function is for demonstation purposes to act as a 'Client' that would be using the CosmosDB SDK directly
      * in conjunction with using a resource key for data access protection.  Typically you make similar calls as below
      * directly from the native client app (Console, Xamarin, etc.) instead of a REST call.
-     * 
+     *
      */
 
     public static class Dogs
@@ -38,7 +38,7 @@ namespace CosmosDBResourceTokenBrokerV2.API
                 .Database(cosmosDatabase)
                 .Collection(cosmosCollection);
 
-        static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        // static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 
 
         /// <summary>
@@ -143,7 +143,7 @@ namespace CosmosDBResourceTokenBrokerV2.API
             // Set the parition key, since our resource token is limited by partition key.  A client could just set this once initially.
             repo.PartitionKey(userId);
 
-            // BUG: This seems to fail on Azure Functions V2 due to the following: 
+            // BUG: This seems to fail on Azure Functions V2 due to the following:
             // https://github.com/Azure/azure-documentdb-dotnet/issues/202
             // https://github.com/Azure/azure-documentdb-dotnet/issues/312
             var results = await repo.GetAllItemsAsync<Dog>(new FeedOptions { EnableCrossPartitionQuery = true });

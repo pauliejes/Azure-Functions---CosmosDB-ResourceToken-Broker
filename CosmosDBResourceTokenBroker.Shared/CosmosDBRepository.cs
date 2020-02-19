@@ -44,8 +44,8 @@ namespace CosmosDBResourceTokenBroker.Shared
             if(!string.IsNullOrEmpty(_cosmosEndpoint) && !string.IsNullOrEmpty(_authKeyOrResourceToken))
             {
                 documentClient = new DocumentClient(
-                    new Uri(_cosmosEndpoint), 
-                    _authKeyOrResourceToken, 
+                    new Uri(_cosmosEndpoint),
+                    _authKeyOrResourceToken,
                     new ConnectionPolicy
                     {
                         RetryOptions = new RetryOptions
@@ -58,7 +58,7 @@ namespace CosmosDBResourceTokenBroker.Shared
                     }
                     );
 
-                System.Diagnostics.Debug.WriteLine($"Creating DocumentClient...");
+                // System.Diagnostics.Debug.WriteLine($"Creating DocumentClient...");
             }
         }
 
@@ -73,7 +73,7 @@ namespace CosmosDBResourceTokenBroker.Shared
                 else
                 {
                     options.PartitionKey = new PartitionKey(_partitionKey);
-                } 
+                }
             }
         }
 
@@ -96,7 +96,7 @@ namespace CosmosDBResourceTokenBroker.Shared
         {
             if(!string.IsNullOrEmpty(_partitionKey) && typedDocument != null)
             {
-                typedDocument.PartitionKey = typedDocument.PartitionKey ?? _partitionKey; 
+                typedDocument.PartitionKey = typedDocument.PartitionKey ?? _partitionKey;
             }
         }
 
@@ -121,7 +121,7 @@ namespace CosmosDBResourceTokenBroker.Shared
             {
                 throw new Exception("The connection string must contain \"AccountEndpoint=\" and \"AccountKey=\" seperated by a semi-colon");
             }
-         
+
             if(components[0].Contains(ACCOUNT_ENDPOINT))
             {
                 _cosmosEndpoint = components[0].Replace(ACCOUNT_ENDPOINT, "");
@@ -150,14 +150,14 @@ namespace CosmosDBResourceTokenBroker.Shared
                 _cosmosEndpoint = endpoint;
                 TryCreateDocumentClient();
             }
-            
+
             return this;
         }
 
         /// <summary>
         /// Auth Key can be found in the Azure Portal under "Keys" or a ResourceToken can be used for access by user permission.
         /// </summary>
-        /// <param name="authKeyOrResourceToken">Auth key should only be used when the key is read-only, 
+        /// <param name="authKeyOrResourceToken">Auth key should only be used when the key is read-only,
         /// otherwise a read-write auth keys (master) should only be used behind a middle-tier service and not stored on the end client!
         /// ResourceTokens can be used on the end client.</param>
         /// <returns></returns>
@@ -168,7 +168,7 @@ namespace CosmosDBResourceTokenBroker.Shared
                 _authKeyOrResourceToken = authKeyOrResourceToken;
                 TryCreateDocumentClient();
             }
-            
+
             return this;
         }
 
@@ -235,7 +235,7 @@ namespace CosmosDBResourceTokenBroker.Shared
             while(query.HasMoreResults)
             {
                 var documents = await query.ExecuteNextAsync<T>();
-                
+
                 results.AddRange(documents);
             }
 
@@ -277,14 +277,14 @@ namespace CosmosDBResourceTokenBroker.Shared
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine($"Unable to delete document. {e.Message}");
+                // System.Diagnostics.Debug.WriteLine($"Unable to delete document. {e.Message}");
                 return false;
             }
         }
 
         /// <summary>
         /// Removes a document from the collection.
-        /// Convenience method to pass the whole document.  
+        /// Convenience method to pass the whole document.
         /// </summary>
         /// <typeparam name="T"></typeparam>
         /// <param name="document"></param>
@@ -317,7 +317,7 @@ namespace CosmosDBResourceTokenBroker.Shared
             catch (Exception e)
             {
                 throw e;
-            }       
+            }
         }
 
         public async Task<T> UpsertItemAsync<T>(T document, RequestOptions requestOptions = null) where T : TypedDocument<T>
@@ -378,10 +378,10 @@ namespace CosmosDBResourceTokenBroker.Shared
             }
             catch (Exception e)
             {
-                System.Diagnostics.Debug.WriteLine($"Unable to remove permission. {e.Message}");
+                // System.Diagnostics.Debug.WriteLine($"Unable to remove permission. {e.Message}");
                 return false;
             }
-            
+
         }
 
         /// <summary>

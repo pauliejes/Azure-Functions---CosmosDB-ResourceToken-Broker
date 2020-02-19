@@ -19,8 +19,8 @@ namespace CosmosDBResourceTokenBroker.API
      * Notes:  This Function is for demonstation purposes to act as a 'Client' that would be using the CosmosDB SDK directly
      * in conjunction with using a resource key for data access protection.  Typically you make similar calls as below
      * directly from the native client app (Console, Xamarin, etc.) instead of a REST call.
-     * 
-     */ 
+     *
+     */
     public static class Dogs
     {
         private static string cosmosDatabase = GetEnvironmentVariable("cosmosDatabase");
@@ -35,7 +35,7 @@ namespace CosmosDBResourceTokenBroker.API
                 .Database(cosmosDatabase)
                 .Collection(cosmosCollection);
 
-        static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        // static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 
         /// <summary>
         /// Add a dog using your request token.
@@ -83,7 +83,7 @@ namespace CosmosDBResourceTokenBroker.API
         /// <returns></returns>
         [FunctionName("GetMyDogs")]
         public static async Task<HttpResponseMessage> GetMyDogs(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequestMessage req, 
+            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequestMessage req,
             TraceWriter log)
         {
             sw.Restart();
