@@ -24,7 +24,7 @@ namespace CosmosDBResourceTokenBroker.API
      *
      */
 
-    public static class GalleryTiles
+    public static class GalleryTile
     {
         private static string cosmosDatabase = GetEnvironmentVariable("cosmosDatabase");
         private static string cosmosCollection = GetEnvironmentVariable("cosmosCollection");
