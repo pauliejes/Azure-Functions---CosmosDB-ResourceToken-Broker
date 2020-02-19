@@ -26,7 +26,7 @@ namespace CosmosDBResourceTokenBroker.API
         private static string COLLECTION = GetEnvironmentVariable("cosmosCollection");
         private static TimeSpan TOKEN_EXPIRY = TimeSpan.FromHours(5);  // Resource Token defaults to 1 hour, max of 5 hours.
 
-        static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
+        // static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 
         private static readonly Lazy<HttpClient> _http = new Lazy<HttpClient>(() => new HttpClient());
         private static HttpClient http => _http.Value;
@@ -50,7 +50,7 @@ namespace CosmosDBResourceTokenBroker.API
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequestMessage req,
             TraceWriter log)
         {
-            sw.Restart();
+            // sw.Restart();
 
             PermissionToken permissionToken = null;
 
@@ -79,9 +79,9 @@ namespace CosmosDBResourceTokenBroker.API
                 return req.CreateErrorResponse(HttpStatusCode.Unauthorized, "This request does not contain an OAuth authorization bearer token.");
             }
 
-            sw.Stop();
+            // sw.Stop();
 
-            log.Info($"Request Duration: {sw.ElapsedMilliseconds}ms.");
+            // log.Info($"Request Duration: {sw.ElapsedMilliseconds}ms.");
 
             return permissionToken == null ?
                     req.CreateErrorResponse(HttpStatusCode.Unauthorized, $"Unable to create permission token for user.") :
