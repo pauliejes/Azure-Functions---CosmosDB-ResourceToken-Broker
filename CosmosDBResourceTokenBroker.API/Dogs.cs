@@ -137,7 +137,7 @@ namespace CosmosDBResourceTokenBroker.API
             // Set the parition key, since our resource token is limited by partition key.  A client could just set this once initially.
             repo.PartitionKey(userId);
 
-            var results = await repo.GetAllItemsAsync<GalleryTile>(new FeedOptions { PartitionKey = new PartitionKey("598194@bah.com") });
+            var results = await repo.GetAllItemsAsync<GalleryTile>(new FeedOptions { PartitionKey = new PartitionKey("598194") });
 
             // sw.Stop();
             // log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");

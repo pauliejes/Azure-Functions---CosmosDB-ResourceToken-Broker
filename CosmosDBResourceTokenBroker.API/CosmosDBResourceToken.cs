@@ -125,6 +125,10 @@ namespace CosmosDBResourceTokenBroker.API
             Permission permission = null;
 
             User user = await CreateUserIfNotExistAsync(userId, repo);
+			string userStr = userId;
+			string[] userArr = userStr.Split('@');
+
+			userStr = userArr[0];
 
             try
             {
@@ -139,13 +143,14 @@ namespace CosmosDBResourceTokenBroker.API
                 {
                     DocumentCollection collection = await repo.GetDocumentCollectionAsync();
 
+
                     permission = new Permission
                     {
 
                         PermissionMode = permissionMode,
                         ResourceLink = collection.SelfLink,
                         // Permission restricts access to this partition key
-                        ResourcePartitionKey = new PartitionKey(userId),
+                        ResourcePartitionKey = new PartitionKey(userStr),
                         // Unique per user
                         Id = permissionId
 
