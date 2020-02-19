@@ -53,17 +53,17 @@ namespace CosmosDBResourceTokenBroker.API
             // sw.Restart();
 
 			string TitleTMP = req.Query["Title"];
-            string Display_tabsTMP = req.Query["display_tabs"];
+            int Display_tabsTMP = req.Query["display_tabs"];
             string TableauIDTMP = req.Query["TableauID"];
 			string UserNameTMP = req.Query["UserName"];
             string ChartSourceLinkTMP = req.Query["ChartSourceLink"];
             string ChartThumbLinkTMP = req.Query["ChartThumbLink"];
-			string FavoritedTMP = req.Query["favorited"];
+			bool FavoritedTMP = req.Query["favorited"];
             string FilterContentTypeTMP = req.Query["filterContentType"];
             string ChartDescriptionTextTMP = req.Query["chartDescriptionText"];
 			string FilterContentGroupTMP = req.Query["filterContentGroup"];
-            string ViewCountTMP = req.Query["viewCount"];
-            string NviewsTMP = req.Query["nviews"];
+            int ViewCountTMP = req.Query["viewCount"];
+            int NviewsTMP = req.Query["nviews"];
 			string SelfServiceTMP = req.Query["SelfService"];
             string ChartPreviewStatusTMP = req.Query["ChartPreviewStatus"];
 			string ChartInfoTMP = req.Query["chartInfo"];
