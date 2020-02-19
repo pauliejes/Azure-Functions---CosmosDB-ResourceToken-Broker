@@ -1,4 +1,4 @@
-﻿using System;
+﻿using System.Core;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -201,10 +201,7 @@ namespace CosmosDBResourceTokenBroker.Shared
             // Add the 'Type' of the document as a query filter, so documents can be filtered by a specific type.
             Expression<Func<T, bool>> typeCheck = p => p.Type == typeof(T).Name;
 
-            IDocumentQuery<T> query = documentClient.CreateDocumentQuery<T>(DocumentCollectionUri, feedOptions)
-                .Where(typeCheck)
-                .Where(predicate)
-                .AsDocumentQuery();
+            IDocumentQuery<T> query = documentClient.CreateDocumentQuery<T>(DocumentCollectionUri, feedOptions).Where(typeCheck).Where(predicate).AsDocumentQuery();
 
             var results = await query.ExecuteNextAsync<T>();
 
@@ -227,10 +224,7 @@ namespace CosmosDBResourceTokenBroker.Shared
             // Add the 'Type' of the document as a query filter, so documents can be filtered by a specific type.
             Expression<Func<T, bool>> typeCheck = p => p.Type == typeof(T).Name;
 
-            IDocumentQuery<T> query = documentClient.CreateDocumentQuery<T>(DocumentCollectionUri, feedOptions)
-                .Where(typeCheck)
-                .Where(predicate)
-                .AsDocumentQuery();
+            IDocumentQuery<T> query = documentClient.CreateDocumentQuery<T>(DocumentCollectionUri, feedOptions).Where(typeCheck).Where(predicate).AsDocumentQuery();
 
             while(query.HasMoreResults)
             {
@@ -251,9 +245,7 @@ namespace CosmosDBResourceTokenBroker.Shared
             // Add the 'Type' of the document as a query filter, so documents can be filtered by a specific type.
             Expression<Func<T, bool>> typeCheck = p => p.Type == typeof(T).Name;
 
-            IDocumentQuery<T> query = documentClient.CreateDocumentQuery<T>(DocumentCollectionUri, feedOptions)
-                .Where(typeCheck)
-                .AsDocumentQuery();
+            IDocumentQuery<T> query = documentClient.CreateDocumentQuery<T>(DocumentCollectionUri, feedOptions).Where(typeCheck).AsDocumentQuery();
 
             while (query.HasMoreResults)
             {

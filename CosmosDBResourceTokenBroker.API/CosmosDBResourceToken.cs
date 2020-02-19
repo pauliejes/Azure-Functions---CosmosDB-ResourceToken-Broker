@@ -1,4 +1,4 @@
-using System;
+using System.Core;
 using System.Collections.Generic;
 using System.Linq;
 using System.Net;
@@ -26,16 +26,14 @@ namespace CosmosDBResourceTokenBroker.API
         private static string COLLECTION = GetEnvironmentVariable("cosmosCollection");
         private static TimeSpan TOKEN_EXPIRY = TimeSpan.FromHours(5);  // Resource Token defaults to 1 hour, max of 5 hours.
 
+
         // static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 
         private static readonly Lazy<HttpClient> _http = new Lazy<HttpClient>(() => new HttpClient());
         private static HttpClient http => _http.Value;
 
         // Using our repository instead of CosmosDB Bindings.
-        static CosmosDBRepository repo = CosmosDBRepository.Instance
-                .ConnectionString(GetEnvironmentVariable("myCosmosDB"))
-                .Database(DATABASE)
-                .Collection(COLLECTION);
+        static CosmosDBRepository repo = CosmosDBRepository.Instance.ConnectionString(GetEnvironmentVariable("myCosmosDB")).Database(DATABASE).Collection(COLLECTION);
 
         /// <summary>
         /// Returns a CosmosDB Resource Token which is needed when the client is calling CosmosDB directly.
