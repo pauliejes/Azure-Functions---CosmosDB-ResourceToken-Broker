@@ -1,31 +1,29 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
-using System.Net.Http.Headers;
-using System.Threading.Tasks;
 
-using Microsoft.Azure.Documents;
-using Microsoft.Azure.Documents.Client;
+using System.IO;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs.Host;
-
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
-
+using System;
 using CosmosDBResourceTokenBroker.Shared;
+using Microsoft.Azure.Documents;
+using Microsoft.Azure.Documents.Client;
+using System.Threading.Tasks;
+using System.Net.Http;
+using System.Net.Http.Headers;
+using Newtonsoft.Json.Linq;
+using System.Linq;
 
-namespace CosmosDBResourceTokenBroker.API
+namespace CosmosDBResourceTokenBrokerV2.API
 {
     public static class CosmosDBResourceToken
     {
         private static string HOST = GetEnvironmentVariable("host");
         private static string DATABASE = GetEnvironmentVariable("cosmosDatabase");
         private static string COLLECTION = GetEnvironmentVariable("cosmosCollection");
-		private static string CONNSTR = GetEnvironmentVariable("myCosmosDB");
-        private static TimeSpan TOKEN_EXPIRY = TimeSpan.FromHours(1);  // Resource Token defaults to 1 hour, max of 5 hours.
+        private static TimeSpan TOKEN_EXPIRY = TimeSpan.FromHours(5);  // Resource Token defaults to 1 hour, max of 5 hours.
 
         // static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 
@@ -34,43 +32,30 @@ namespace CosmosDBResourceTokenBroker.API
 
         // Using our repository instead of CosmosDB Bindings.
         static CosmosDBRepository repo = CosmosDBRepository.Instance
-                .ConnectionString(CONNSTR)
+                .ConnectionString(GetEnvironmentVariable("myCosmosDB"))
                 .Database(DATABASE)
                 .Collection(COLLECTION);
 
-        /// <summary>
-        /// Returns a CosmosDB Resource Token which is needed when the client is calling CosmosDB directly.
-        /// </summary>
-        /// <param name="req"></param>
-        /// <param name="documentClient"></param>
-        /// <param name="document"></param>
-        /// <param name="log"></param>
-        /// <returns></returns>
         [FunctionName("CosmosDBResourceToken")]
-        public static async Task<HttpResponseMessage> Run(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequestMessage req,
-            TraceWriter log)
+        public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req, TraceWriter log)
         {
             // sw.Restart();
 
             PermissionToken permissionToken = null;
 
-            var zumoHeader = req.Headers?.GetValues("x-zumo-auth").FirstOrDefault();
+            string authHeader = req.Headers["Authorization"];
 
-            //if (req.Headers.Authorization != null && req.Headers.Authorization.Scheme.Equals("Bearer") && !string.IsNullOrEmpty(req.Headers.Authorization.Parameter))
-            if (!string.IsNullOrEmpty(zumoHeader))
+            if (!string.IsNullOrEmpty(authHeader) && authHeader.StartsWith("Bearer"))
             {
-				return req.CreateErrorResponse(HttpStatusCode.OK, "Woopwoop");
                 // User passed an authenication token
                 // Process and create a user in CosmosDB, write the token to the token cache and return the resource token.
 
-                //string accessToken = req.Headers.Authorization.Parameter;
-                string accessToken = zumoHeader;
+                string accessToken = authHeader.Replace("Bearer ", "").Trim();
                 string userId = await GetUserIDFromAccessToken(HOST, accessToken);
 
                 if (string.IsNullOrEmpty(userId))
                 {
-                    return req.CreateErrorResponse(HttpStatusCode.Unauthorized, "Unable to get a user id from the token.");
+                    return new BadRequestObjectResult("Unable to get userId from the token.");
                 }
 
                 permissionToken = await GetPermissionToken(userId, repo, PermissionMode.All);
@@ -78,7 +63,7 @@ namespace CosmosDBResourceTokenBroker.API
             else
             {
                 // Anonymous User
-                return req.CreateErrorResponse(HttpStatusCode.Unauthorized, "This request does not contain an OAuth authorization bearer token.");
+                return new BadRequestObjectResult("The request does not contain an OAuth Authorization Bearer token.");
             }
 
             // sw.Stop();
@@ -86,8 +71,8 @@ namespace CosmosDBResourceTokenBroker.API
             // log.Info($"Request Duration: {sw.ElapsedMilliseconds}ms.");
 
             return permissionToken == null ?
-                    req.CreateErrorResponse(HttpStatusCode.Unauthorized, $"Unable to create permission token for user.") :
-                    req.CreateResponse<PermissionToken>(HttpStatusCode.OK, permissionToken);
+                new BadRequestObjectResult("Unable to create permissioon token for user.") :
+                    (ActionResult)new OkObjectResult(permissionToken);
 
         }
 
@@ -207,6 +192,4 @@ namespace CosmosDBResourceTokenBroker.API
             return System.Environment.GetEnvironmentVariable(name, EnvironmentVariableTarget.Process);
         }
     }
-
-
 }

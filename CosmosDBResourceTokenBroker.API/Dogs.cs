@@ -1,19 +1,21 @@
+
 using System;
-using System.Linq;
-using System.Net;
-using System.Net.Http;
+using System.IO;
 using System.Threading.Tasks;
 
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Azure.WebJobs;
 using Microsoft.Azure.WebJobs.Extensions.Http;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Azure.WebJobs.Host;
+using Newtonsoft.Json;
 
 using CosmosDBResourceTokenBroker.Shared;
 using CosmosDBResourceTokenBroker.Shared.Models;
 using Microsoft.Azure.Documents.Client;
 using Microsoft.Azure.Documents;
 
-namespace CosmosDBResourceTokenBroker.API
+namespace CosmosDBResourceTokenBrokerV2.API
 {
     /*
      * Notes:  This Function is for demonstation purposes to act as a 'Client' that would be using the CosmosDB SDK directly
@@ -21,6 +23,7 @@ namespace CosmosDBResourceTokenBroker.API
      * directly from the native client app (Console, Xamarin, etc.) instead of a REST call.
      *
      */
+
     public static class Dogs
     {
         private static string cosmosDatabase = GetEnvironmentVariable("cosmosDatabase");
@@ -37,6 +40,7 @@ namespace CosmosDBResourceTokenBroker.API
 
         // static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 
+
         /// <summary>
         /// Add a dog using your request token.
         /// </summary>
@@ -44,21 +48,19 @@ namespace CosmosDBResourceTokenBroker.API
         /// <param name="log"></param>
         /// <returns></returns>
         [FunctionName("AddDogs")]
-        public static async Task<HttpResponseMessage> AddDog(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequestMessage req,
-            TraceWriter log)
+        public static async Task<IActionResult> AddDog([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req, TraceWriter log)
         {
-            var queryValues = req.GetQueryNameValuePairs();
+            // sw.Restart();
 
-            string dogName = queryValues.FirstOrDefault(p => p.Key == "Name").Value;
-            string dogBreed = queryValues.FirstOrDefault(p => p.Key == "Breed").Value;
-            string userId = queryValues.FirstOrDefault(p => p.Key == "UserId").Value;
+            string dogName = req.Query["Name"];
+            string dogBreed = req.Query["Breed"];
+            string userId = req.Query["UserId"];
 
-            string resourceToken = req.Headers?.GetValues("ResourceToken").FirstOrDefault();
+            string resourceToken = req.Headers["ResourceToken"];
 
             if (string.IsNullOrEmpty(resourceToken))
             {
-                return req.CreateErrorResponse(HttpStatusCode.Unauthorized, "ResourceToken is a required");
+                new BadRequestObjectResult("ResourceToken is required");
             }
 
             // Set the resource token, to demonstrate usage from a 'Client'.
@@ -69,11 +71,15 @@ namespace CosmosDBResourceTokenBroker.API
 
             Dog dog = await repo.UpsertItemAsync<Dog>(new Dog { Breed = dogBreed, Name = dogName });
 
-            return dog == null
-                ? req.CreateResponse(HttpStatusCode.BadRequest, "Unable to add the dog.")
-                : req.CreateResponse(HttpStatusCode.OK, dog);
+            // sw.Stop();
 
+            // log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
+
+            return dog != null
+                ? (ActionResult)new OkObjectResult(dog)
+                : new BadRequestObjectResult("Unable to add the dog.");
         }
+
 
         /// <summary>
         /// This example shows how a client can only access items that the resource token and their permission key match.
@@ -82,22 +88,18 @@ namespace CosmosDBResourceTokenBroker.API
         /// <param name="log"></param>
         /// <returns></returns>
         [FunctionName("GetMyDogs")]
-        public static async Task<HttpResponseMessage> GetMyDogs(
-            [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequestMessage req,
-            TraceWriter log)
+        public static async Task<IActionResult> GetMyDogs([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req, TraceWriter log)
         {
             // sw.Restart();
 
-            var queryValues = req.GetQueryNameValuePairs();
-
             // As a client, you would already have your userId when calling typically.
-            string userId = queryValues.FirstOrDefault(p => p.Key == "UserId").Value;
+            string userId = req.Query["UserId"];
 
-            string resourceToken = req.Headers?.GetValues("ResourceToken").FirstOrDefault();
+            string resourceToken = req.Headers["ResourceToken"];
 
             if (string.IsNullOrEmpty(resourceToken))
             {
-                return req.CreateErrorResponse(HttpStatusCode.Unauthorized, "ResourceToken is a required");
+                new BadRequestObjectResult("ResourceToken is required");
             }
 
             // Set the resource token, to demonstrate usage from a 'Client'.
@@ -105,15 +107,14 @@ namespace CosmosDBResourceTokenBroker.API
             // Set the parition key, since our resource token is limited by partition key.  A client could just set this once initially.
             repo.PartitionKey(userId);
 
-            var results = await repo.GetAllItemsAsync<Dog>();
+            var results = await repo.GetAllItemsAsync<Dog>(new FeedOptions { PartitionKey = new PartitionKey("adhockem@microsoft.com") });
 
             // sw.Stop();
-
             // log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
 
-            return results == null
-                ? req.CreateResponse(HttpStatusCode.BadRequest, "Unable to find document(s) with the given type.")
-                : req.CreateResponse(HttpStatusCode.OK, results);
+            return results != null
+                ? (ActionResult)new OkObjectResult(results)
+                : new BadRequestObjectResult("Unable to find document(s) with the given type.");
         }
 
         /// <summary>
@@ -123,79 +124,36 @@ namespace CosmosDBResourceTokenBroker.API
         /// <param name="log"></param>
         /// <returns></returns>
         [FunctionName("TryGetAllDogs")]
-        public static async Task<HttpResponseMessage> TryGetAllDogs(
-    [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequestMessage req,
-    TraceWriter log)
+        public static async Task<IActionResult> TryGetAllDogs([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req, TraceWriter log)
         {
             // sw.Restart();
 
-            var queryValues = req.GetQueryNameValuePairs();
-
             // As a client, you would already have your userId when calling typically.
-            string userId = queryValues.FirstOrDefault(p => p.Key == "UserId").Value;
+            string userId = req.Query["UserId"];
 
-            string resourceToken = req.Headers?.GetValues("ResourceToken").FirstOrDefault();
+            string resourceToken = req.Headers["ResourceToken"];
 
             if (string.IsNullOrEmpty(resourceToken))
             {
-                return req.CreateErrorResponse(HttpStatusCode.Unauthorized, "ResourceToken is a required");
+                new BadRequestObjectResult("ResourceToken is required");
             }
 
             // Set the resource token, to demonstrate usage from a 'Client'.
             repo.AuthKeyOrResourceToken(resourceToken);
-
             // Set the parition key, since our resource token is limited by partition key.  A client could just set this once initially.
             repo.PartitionKey(userId);
 
+            // BUG: This seems to fail on Azure Functions V2 due to the following:
+            // https://github.com/Azure/azure-documentdb-dotnet/issues/202
+            // https://github.com/Azure/azure-documentdb-dotnet/issues/312
             var results = await repo.GetAllItemsAsync<Dog>(new FeedOptions { EnableCrossPartitionQuery = true });
 
             // sw.Stop();
-
-
             // log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
 
-            return results == null
-                ? req.CreateResponse(HttpStatusCode.BadRequest, "Unable to find document(s) with the given type.")
-                : req.CreateResponse(HttpStatusCode.OK, results);
-        }
-
-        [FunctionName("GetDogsByBreed")]
-        public static async Task<HttpResponseMessage> GetDogsByBreed(
-[HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequestMessage req,
-TraceWriter log)
-        {
-            // sw.Restart();
-
-            var queryValues = req.GetQueryNameValuePairs();
-
-            // As a client, you would already have your userId when calling typically.
-            string userId = queryValues.FirstOrDefault(p => p.Key == "UserId").Value;
-
-            string breed = queryValues.FirstOrDefault(p => p.Key == "Breed").Value;
-
-            string resourceToken = req.Headers?.GetValues("ResourceToken").FirstOrDefault();
-
-            if (string.IsNullOrEmpty(resourceToken))
-            {
-                return req.CreateErrorResponse(HttpStatusCode.Unauthorized, "ResourceToken is a required");
-            }
-
-            // Set the resource token, to demonstrate usage from a 'Client'.
-            repo.AuthKeyOrResourceToken(resourceToken);
-
-            // Set the parition key, since our resource token is limited by partition key.  A client could just set this once initially.
-            repo.PartitionKey(userId);
-
-            var results = await repo.GetItemAsync<Dog>(p => p.Breed == breed);
-
-            // sw.Stop();
-
-
-            // log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
-
-            return results == null
-                ? req.CreateResponse(HttpStatusCode.BadRequest, "Unable to find document(s) with the given type.")
-                : req.CreateResponse(HttpStatusCode.OK, results);
+            return results != null
+                ? (ActionResult)new OkObjectResult(results)
+                : new BadRequestObjectResult("Unable to find document(s) with the given type.");
         }
 
         public static string GetEnvironmentVariable(string name)
