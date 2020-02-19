@@ -39,7 +39,7 @@ namespace CosmosDBResourceTokenBrokerV2.API
         [FunctionName("CosmosDBResourceToken")]
         public static async Task<IActionResult> Run([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req, TraceWriter log)
         {
-            sw.Restart();
+            // sw.Restart();
 
             PermissionToken permissionToken = null;
 
@@ -66,9 +66,9 @@ namespace CosmosDBResourceTokenBrokerV2.API
                 return new BadRequestObjectResult("The request does not contain an OAuth Authorization Bearer token.");
             }
 
-            sw.Stop();
+            // sw.Stop();
 
-            log.Info($"Request Duration: {sw.ElapsedMilliseconds}ms.");
+            // log.Info($"Request Duration: {sw.ElapsedMilliseconds}ms.");
 
             return permissionToken == null ?
                 new BadRequestObjectResult("Unable to create permissioon token for user.") :

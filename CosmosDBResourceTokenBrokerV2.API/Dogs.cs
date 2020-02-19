@@ -50,7 +50,7 @@ namespace CosmosDBResourceTokenBrokerV2.API
         [FunctionName("AddDogs")]
         public static async Task<IActionResult> AddDog([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req, TraceWriter log)
         {
-            sw.Restart();
+            // sw.Restart();
 
             string dogName = req.Query["Name"];
             string dogBreed = req.Query["Breed"];
@@ -71,9 +71,9 @@ namespace CosmosDBResourceTokenBrokerV2.API
 
             Dog dog = await repo.UpsertItemAsync<Dog>(new Dog { Breed = dogBreed, Name = dogName });
 
-            sw.Stop();
+            // sw.Stop();
 
-            log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
+            // log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
 
             return dog != null
                 ? (ActionResult)new OkObjectResult(dog)
@@ -90,7 +90,7 @@ namespace CosmosDBResourceTokenBrokerV2.API
         [FunctionName("GetMyDogs")]
         public static async Task<IActionResult> GetMyDogs([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req, TraceWriter log)
         {
-            sw.Restart();
+            // sw.Restart();
 
             // As a client, you would already have your userId when calling typically.
             string userId = req.Query["UserId"];
@@ -109,8 +109,8 @@ namespace CosmosDBResourceTokenBrokerV2.API
 
             var results = await repo.GetAllItemsAsync<Dog>(new FeedOptions { PartitionKey = new PartitionKey("adhockem@microsoft.com") });
 
-            sw.Stop();
-            log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
+            // sw.Stop();
+            // log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
 
             return results != null
                 ? (ActionResult)new OkObjectResult(results)
@@ -126,7 +126,7 @@ namespace CosmosDBResourceTokenBrokerV2.API
         [FunctionName("TryGetAllDogs")]
         public static async Task<IActionResult> TryGetAllDogs([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req, TraceWriter log)
         {
-            sw.Restart();
+            // sw.Restart();
 
             // As a client, you would already have your userId when calling typically.
             string userId = req.Query["UserId"];
@@ -148,8 +148,8 @@ namespace CosmosDBResourceTokenBrokerV2.API
             // https://github.com/Azure/azure-documentdb-dotnet/issues/312
             var results = await repo.GetAllItemsAsync<Dog>(new FeedOptions { EnableCrossPartitionQuery = true });
 
-            sw.Stop();
-            log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
+            // sw.Stop();
+            // log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
 
             return results != null
                 ? (ActionResult)new OkObjectResult(results)

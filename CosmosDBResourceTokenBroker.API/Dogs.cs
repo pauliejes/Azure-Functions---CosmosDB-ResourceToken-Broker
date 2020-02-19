@@ -86,7 +86,7 @@ namespace CosmosDBResourceTokenBroker.API
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequestMessage req,
             TraceWriter log)
         {
-            sw.Restart();
+            // sw.Restart();
 
             var queryValues = req.GetQueryNameValuePairs();
 
@@ -107,9 +107,9 @@ namespace CosmosDBResourceTokenBroker.API
 
             var results = await repo.GetAllItemsAsync<Dog>();
 
-            sw.Stop();
+            // sw.Stop();
 
-            log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
+            // log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
 
             return results == null
                 ? req.CreateResponse(HttpStatusCode.BadRequest, "Unable to find document(s) with the given type.")
@@ -127,8 +127,8 @@ namespace CosmosDBResourceTokenBroker.API
     [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequestMessage req,
     TraceWriter log)
         {
-            sw.Restart();
-
+            // sw.Restart();
+			
             var queryValues = req.GetQueryNameValuePairs();
 
             // As a client, you would already have your userId when calling typically.

@@ -50,7 +50,7 @@ namespace CosmosDBResourceTokenBroker.API
             [HttpTrigger(AuthorizationLevel.Function, "get", "post", Route = null)]HttpRequestMessage req,
             TraceWriter log)
         {
-            sw.Restart();
+            // sw.Restart();
 
             PermissionToken permissionToken = null;
 
@@ -79,9 +79,9 @@ namespace CosmosDBResourceTokenBroker.API
                 return req.CreateErrorResponse(HttpStatusCode.Unauthorized, "This request does not contain an OAuth authorization bearer token.");
             }
 
-            sw.Stop();
+            // sw.Stop();
 
-            log.Info($"Request Duration: {sw.ElapsedMilliseconds}ms.");
+            // log.Info($"Request Duration: {sw.ElapsedMilliseconds}ms.");
 
             return permissionToken == null ?
                     req.CreateErrorResponse(HttpStatusCode.Unauthorized, $"Unable to create permission token for user.") :
