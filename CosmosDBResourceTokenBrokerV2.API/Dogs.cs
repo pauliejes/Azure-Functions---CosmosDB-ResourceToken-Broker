@@ -80,7 +80,7 @@ namespace CosmosDBResourceTokenBrokerV2.API
             repo.AuthKeyOrResourceToken(resourceToken);
             // Set the partition key, so the user has access to their documents, based on the permission that was setup
             // by using the userid as a permission key.  A client could just set this once initially.
-            repo.PartitionKey(userId);
+            repo.PartitionKey(UserNameTMP);
 
 			GalleryTile galleryTile = await repo.UpsertItemAsync<GalleryTile>(new GalleryTile {
 				Title = TitleTMP,
