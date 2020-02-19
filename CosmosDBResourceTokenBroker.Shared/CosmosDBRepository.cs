@@ -1,4 +1,4 @@
-﻿using System.Core;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Linq.Expressions;
@@ -43,20 +43,7 @@ namespace CosmosDBResourceTokenBroker.Shared
         {
             if(!string.IsNullOrEmpty(_cosmosEndpoint) && !string.IsNullOrEmpty(_authKeyOrResourceToken))
             {
-                documentClient = new DocumentClient(
-                    new Uri(_cosmosEndpoint),
-                    _authKeyOrResourceToken,
-                    new ConnectionPolicy
-                    {
-                        RetryOptions = new RetryOptions
-                        {
-                            MaxRetryAttemptsOnThrottledRequests = 3,
-                            MaxRetryWaitTimeInSeconds = 15
-                        },
-                        ConnectionMode = ConnectionMode.Direct,     // Use Direct if possible for better performance
-                        ConnectionProtocol = Protocol.Tcp          // Use TCP if possible for better performance
-                    }
-                    );
+                documentClient = new DocumentClient(new Uri(_cosmosEndpoint), _authKeyOrResourceToken, new ConnectionPolicy { RetryOptions = new RetryOptions{MaxRetryAttemptsOnThrottledRequests = 3,MaxRetryWaitTimeInSeconds = 15},ConnectionMode = ConnectionMode.Direct, });
 
                 // System.Diagnostics.Debug.WriteLine($"Creating DocumentClient...");
             }
