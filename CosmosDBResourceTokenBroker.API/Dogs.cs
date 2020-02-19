@@ -24,7 +24,7 @@ namespace CosmosDBResourceTokenBroker.API
      *
      */
 
-    public static class Dogs
+    public static class GalleryTiles
     {
         private static string cosmosDatabase = GetEnvironmentVariable("cosmosDatabase");
         private static string cosmosCollection = GetEnvironmentVariable("cosmosCollection");
@@ -42,19 +42,32 @@ namespace CosmosDBResourceTokenBroker.API
 
 
         /// <summary>
-        /// Add a dog using your request token.
+        /// Add a GalleryTile using your request token.
         /// </summary>
         /// <param name="req"></param>
         /// <param name="log"></param>
         /// <returns></returns>
-        [FunctionName("AddDogs")]
-        public static async Task<IActionResult> AddDog([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req, TraceWriter log)
+        [FunctionName("AddGalleryTile")]
+        public static async Task<IActionResult> AddGalleryTile([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req, TraceWriter log)
         {
             // sw.Restart();
 
-            string dogName = req.Query["Name"];
-            string dogBreed = req.Query["Breed"];
-            string userId = req.Query["UserId"];
+			string TitleTMP = req.Query["Title"];
+            string Display_tabsTMP = req.Query["display_tabs"];
+            string TableauIDTMP = req.Query["TableauID"];
+			string UserNameTMP = req.Query["UserName"];
+            string ChartSourceLinkTMP = req.Query["ChartSourceLink"];
+            string ChartThumbLinkTMP = req.Query["ChartThumbLink"];
+			string FavoritedTMP = req.Query["favorited"];
+            string FilterContentTypeTMP = req.Query["filterContentType"];
+            string ChartDescriptionTextTMP = req.Query["chartDescriptionText"];
+			string FilterContentGroupTMP = req.Query["filterContentGroup"];
+            string ViewCountTMP = req.Query["viewCount"];
+            string NviewsTMP = req.Query["nviews"];
+			string SelfServiceTMP = req.Query["SelfService"];
+            string ChartPreviewStatusTMP = req.Query["ChartPreviewStatus"];
+			string ChartInfoTMP = req.Query["chartInfo"];
+			string ChartUseTMP = req.Query["chartUse"];
 
             string resourceToken = req.Headers["ResourceToken"];
 
@@ -69,15 +82,32 @@ namespace CosmosDBResourceTokenBroker.API
             // by using the userid as a permission key.  A client could just set this once initially.
             repo.PartitionKey(userId);
 
-            Dog dog = await repo.UpsertItemAsync<Dog>(new Dog { Breed = dogBreed, Name = dogName });
+            GalleryTile galleryTile = await repo.UpsertItemAsync<GalleryTile>(new GalleryTile {
+				Title = TitleTMP,
+				Display_tabs = Display_tabsTMP,
+				TableauID = TableauIDTMP,
+				UserName = UserNameTMP,
+				ChartSourceLink = ChartSourceLinkTMP,
+				ChartThumbLink = ChartThumbLinkTMP,
+				Favorited = FavoritedTMP,
+				FilterContentType = FilterContentTypeTMP,
+				ChartDescriptionText = ChartDescriptionTextTMP,
+				FilterContentGroup = FilterContentGroupTMP,
+				ViewCount = ViewCountTMP,
+				Nviews = NviewsTMP,
+				SelfService = SelfServiceTMP,
+				ChartPreviewStatus = ChartPreviewStatusTMP,
+				ChartInfo = ChartInfoTMP,
+				ChartUse = ChartUseTMP
+			});
 
             // sw.Stop();
 
             // log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
 
-            return dog != null
-                ? (ActionResult)new OkObjectResult(dog)
-                : new BadRequestObjectResult("Unable to add the dog.");
+            return galleryTile != null
+                ? (ActionResult)new OkObjectResult(galleryTile)
+                : new BadRequestObjectResult("Unable to add the GalleryTile.");
         }
 
 
@@ -87,8 +117,8 @@ namespace CosmosDBResourceTokenBroker.API
         /// <param name="req"></param>
         /// <param name="log"></param>
         /// <returns></returns>
-        [FunctionName("GetMyDogs")]
-        public static async Task<IActionResult> GetMyDogs([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req, TraceWriter log)
+        [FunctionName("GetMyGalleryTiles")]
+        public static async Task<IActionResult> GetMyGalleryTiles([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req, TraceWriter log)
         {
             // sw.Restart();
 
@@ -107,7 +137,7 @@ namespace CosmosDBResourceTokenBroker.API
             // Set the parition key, since our resource token is limited by partition key.  A client could just set this once initially.
             repo.PartitionKey(userId);
 
-            var results = await repo.GetAllItemsAsync<Dog>(new FeedOptions { PartitionKey = new PartitionKey("adhockem@microsoft.com") });
+            var results = await repo.GetAllItemsAsync<GalleryTile>(new FeedOptions { PartitionKey = new PartitionKey("598194@bah.com") });
 
             // sw.Stop();
             // log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
@@ -123,8 +153,8 @@ namespace CosmosDBResourceTokenBroker.API
         /// <param name="req"></param>
         /// <param name="log"></param>
         /// <returns></returns>
-        [FunctionName("TryGetAllDogs")]
-        public static async Task<IActionResult> TryGetAllDogs([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req, TraceWriter log)
+        [FunctionName("TryGetAllGalleryTiles")]
+        public static async Task<IActionResult> TryGetAllGalleryTiles([HttpTrigger(AuthorizationLevel.Anonymous, "get", "post", Route = null)]HttpRequest req, TraceWriter log)
         {
             // sw.Restart();
 
@@ -146,7 +176,7 @@ namespace CosmosDBResourceTokenBroker.API
             // BUG: This seems to fail on Azure Functions V2 due to the following:
             // https://github.com/Azure/azure-documentdb-dotnet/issues/202
             // https://github.com/Azure/azure-documentdb-dotnet/issues/312
-            var results = await repo.GetAllItemsAsync<Dog>(new FeedOptions { EnableCrossPartitionQuery = true });
+            var results = await repo.GetAllItemsAsync<GalleryTile>(new FeedOptions { EnableCrossPartitionQuery = true });
 
             // sw.Stop();
             // log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
