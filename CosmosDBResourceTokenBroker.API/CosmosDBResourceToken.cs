@@ -56,28 +56,28 @@ namespace CosmosDBResourceTokenBroker.API
 
             var zumoHeader = req.Headers?.GetValues("x-zumo-auth").FirstOrDefault();
 
-            //if (req.Headers.Authorization != null && req.Headers.Authorization.Scheme.Equals("Bearer") && !string.IsNullOrEmpty(req.Headers.Authorization.Parameter))
-            if (!string.IsNullOrEmpty(zumoHeader))
-            {
+            // //if (req.Headers.Authorization != null && req.Headers.Authorization.Scheme.Equals("Bearer") && !string.IsNullOrEmpty(req.Headers.Authorization.Parameter))
+            // if (!string.IsNullOrEmpty(zumoHeader))
+            // {
                 // User passed an authenication token
                 // Process and create a user in CosmosDB, write the token to the token cache and return the resource token.
 
                 //string accessToken = req.Headers.Authorization.Parameter;
-                string accessToken = zumoHeader;
-                string userId = await GetUserIDFromAccessToken(HOST, accessToken);
+            // string accessToken = zumoHeader;
+            string userId = zumoHeader;//await GetUserIDFromAccessToken(HOST, accessToken);
 
-                if (string.IsNullOrEmpty(userId))
-                {
-                    return req.CreateErrorResponse(HttpStatusCode.Unauthorized, "Unable to get a user id from the token.");
-                }
-
-                permissionToken = await GetPermissionToken(userId, repo, PermissionMode.All);
-            }
-            else
+            if (string.IsNullOrEmpty(userId))
             {
-                // Anonymous User
-                return req.CreateErrorResponse(HttpStatusCode.Unauthorized, "This request does not contain an OAuth authorization bearer token.");
+                return req.CreateErrorResponse(HttpStatusCode.Unauthorized, "Unable to get a user id from the token.");
             }
+
+            permissionToken = await GetPermissionToken(userId, repo, PermissionMode.All);
+            // }
+            // else
+            // {
+            //     // Anonymous User
+            //     return req.CreateErrorResponse(HttpStatusCode.Unauthorized, "This request does not contain an OAuth authorization bearer token.");
+            // }
 
             // sw.Stop();
 
