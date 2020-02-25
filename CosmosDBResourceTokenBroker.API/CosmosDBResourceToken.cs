@@ -23,7 +23,7 @@ namespace CosmosDBResourceTokenBroker.API
     {
         private static string HOST = GetEnvironmentVariable("host");
         private static string DATABASE = GetEnvironmentVariable("cosmosDatabase");
-        private static string COLLECTION = GetEnvironmentVariable("cosmosCollection");
+        private static string COLLECTION = GetEnvironmentVariable("userCollection");
         private static TimeSpan TOKEN_EXPIRY = TimeSpan.FromHours(5);  // Resource Token defaults to 1 hour, max of 5 hours.
 
         // static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
