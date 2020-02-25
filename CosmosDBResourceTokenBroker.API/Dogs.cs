@@ -27,7 +27,9 @@ namespace CosmosDBResourceTokenBroker.API
     public static class GalleryTiles
     {
         private static string cosmosDatabase = GetEnvironmentVariable("cosmosDatabase");
-        private static string cosmosCollection = GetEnvironmentVariable("cosmosCollection");
+		private static string cosmosCollection = GetEnvironmentVariable("userCollection");
+		private static string cosmosCollection2 = GetEnvironmentVariable("tableauCollection");
+
 
         /// <summary>
         /// Setup our repository with our connection info.  These can be changed at any time
@@ -37,6 +39,12 @@ namespace CosmosDBResourceTokenBroker.API
                 .Endpoint(GetEnvironmentVariable("cosmosDBEndpoint"))
                 .Database(cosmosDatabase)
                 .Collection(cosmosCollection);
+
+		static CosmosDBRepository repo2 = CosmosDBRepository.Instance
+                .Endpoint(GetEnvironmentVariable("cosmosDBEndpoint"))
+                .Database(cosmosDatabase)
+                .Collection(cosmosCollection2);
+
 
         // static System.Diagnostics.Stopwatch sw = new System.Diagnostics.Stopwatch();
 
@@ -169,14 +177,14 @@ namespace CosmosDBResourceTokenBroker.API
             }
 
             // Set the resource token, to demonstrate usage from a 'Client'.
-            repo.AuthKeyOrResourceToken(resourceToken);
+            repo2.AuthKeyOrResourceToken(resourceToken);
             // Set the parition key, since our resource token is limited by partition key.  A client could just set this once initially.
-            repo.PartitionKey(userId);
+            repo2.PartitionKey(userId);
 
             // BUG: This seems to fail on Azure Functions V2 due to the following:
             // https://github.com/Azure/azure-documentdb-dotnet/issues/202
             // https://github.com/Azure/azure-documentdb-dotnet/issues/312
-            var results = await repo.GetAllItemsAsync<GalleryTile>(new FeedOptions { EnableCrossPartitionQuery = true });
+            var results = await repo2.GetAllItemsAsync<GalleryTile>(new FeedOptions { EnableCrossPartitionQuery = true });
 
             // sw.Stop();
             // log.Info($"Execution took: {sw.ElapsedMilliseconds}ms.");
