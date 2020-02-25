@@ -169,7 +169,7 @@ namespace CosmosDBResourceTokenBroker.API
             // As a client, you would already have your userId when calling typically.
             string userId = req.Query["UserId"];
 
-            string resourceToken = req.Headers["ResourceToken"];
+            string resourceToken = req.Headers["x-zumo-auth"];
 
             if (string.IsNullOrEmpty(resourceToken))
             {
